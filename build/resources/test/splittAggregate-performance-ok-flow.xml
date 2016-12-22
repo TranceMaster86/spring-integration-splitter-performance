@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <int:gateway id="gw" service-interface="SplittAggregateFlowGateway"/>
+
+    <int:channel id="in"/>
+
+    <int:splitter input-channel="in" output-channel="headerEnricher" expression="headers['splittHeader']" />
+
+    <int:channel id="headerEnricher"/>
+
+    <int:header-enricher input-channel="headerEnricher" output-channel="collection">
+        <int:header name="splittHeader" expression="''" overwrite="true" />
+    </int:header-enricher>
+
+    <int:channel id="collection"/>
+
+    <int:aggregator input-channel="collection" output-channel="out"/>
+
+    <int:channel id="out"/>
+
+</beans>
+
+
+
